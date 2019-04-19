@@ -11,6 +11,8 @@ body{
 }
 h4{
     margin:0;
+    margin-bottom:5px;
+    background-color:#333;
 }
 
 
@@ -50,7 +52,7 @@ h4{
     padding:10px;
 }
 .menu_subdivs{
-    background-color: #333;
+    background-color: #222;
 }
 #menu_subdivs_controls{
     width:100%;
@@ -66,12 +68,16 @@ h4{
     margin-top:1%;
     background-color:#222;
 }
+.party_member:last-child, .person_at_place:last-child{
+    margin-bottom: 5px;
+}
 
 .clickable:hover{
     background-color: #444;
+    cursor:pointer;
 }
 
-.party_member, .person_at_place{
+.party_member .details, .person_at_place .details{
     display:flex;
     justify-content:flex-start;    
 }

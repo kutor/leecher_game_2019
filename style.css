@@ -1,0 +1,80 @@
+html, 
+body{
+	font-family:Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	width:100%;
+	height:100%;
+    margin:0;
+    overflow-x: hidden;
+    color:#eee;
+    background-color:#111;
+    cursor: context-menu;
+}
+h4{
+    margin:0;
+}
+
+
+#container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
+
+#init{
+    height:100%;
+    width:100%;
+    overflow:auto;
+    z-index:1;
+    display:block;
+    background-color:#111;
+}
+
+#map_name{
+    width:100%;
+    height:5%;
+    background-color:#222;
+    text-align:center;
+}
+
+#game_area{
+    display:flex;
+    justify-content: center;
+    width:100%;
+}
+
+#left_text, #right_menu{
+    width:47.5%;
+    height:80%;
+    background-color:#222;
+    margin:1% 0.5%;
+    padding:10px;
+}
+.menu_subdivs{
+    background-color: #333;
+}
+#menu_subdivs_controls{
+    width:100%;
+    display:flex;
+    justify-content: space-around;
+}
+.controls{
+    background-color: #333;
+    flex:1 1 0;
+    text-align:center;
+}
+.menu_subdivs:last-child{
+    margin-top:1%;
+    background-color:#222;
+}
+
+.clickable:hover{
+    background-color: #444;
+}
+
+.party_member, .person_at_place{
+    display:flex;
+    justify-content:flex-start;    
+}
+.party_member span, .person_at_place span{
+    width:20%;  
+}

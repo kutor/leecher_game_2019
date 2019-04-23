@@ -139,6 +139,55 @@ let maps = [
             ]
         },
     },
+
+    {
+        mapName: "PTG1",
+        mapMusic: null,
+        mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
+        mapArriveEvent: function(){
+			console.log(`arrived at ${this.mapName}`);
+		},
+        mapMenu: {
+            personsAtPlace: [
+                {
+                    personName: "PTG1 Person 1",
+                    personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
+                    personTalk: ["talk test 1", "talk test 2", function(){writeText("TALKFUNCTION!")}],
+                    personRomance: ["romance test 1", function(){writeText("ROMANCEFUNCTION!")}, "romance test 3 final"],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                },
+                {
+                    personName: "Person2",
+                    personDescription: "Person2 Desc.",
+                    personTalk: ["", ""],
+                    personRomance: ["", ""],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                },
+                {
+                    personName: "Person 3",
+                    personDescription: "Person2 Desc. Lorem ipsum dolor sit amet.",
+                    personTalk: ["talk test 1", "talk test 2", "talk test 3 final"],
+                    personRomance: ["romance test 1", "romance test 2"],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                },
+            ],
+            pointsOfInterest: [
+                {
+                    poiName: "Keresek",
+                    poiEvent: ["", function(){writeText("PoI text for stuff", "poi text title")}, ""],
+                    poiDone: 0
+                },
+
+            ],
+            placesToGo: [
+                "TEST MAP NAME",
+                "PTG2"
+            ]
+        },
+    },
 ];
 
 
@@ -232,6 +281,7 @@ const removeFromParty = (name) => {
     loadParty();
 }
 
+
 // LOAD INVENTORY
 const loadInventory = () => {
     menuInventory.innerHTML = "";
@@ -265,7 +315,6 @@ const loadInventory = () => {
     })
 }
 
-
 const addToInventory = (name) => {
     for(i = 0; i < items.length; i++){
         if(items[i].itemName == name){
@@ -275,7 +324,7 @@ const addToInventory = (name) => {
     loadInventory();
 }
 
-const removeFromInventory = (name) => {
+var removeFromInventory = (name) => {
     for(i = 0; i < CURRENT_STATE.inventory.length; i++){
         if(CURRENT_STATE.inventory[i].itemName == name){
             CURRENT_STATE.inventory.splice(i, 1);
@@ -283,6 +332,7 @@ const removeFromInventory = (name) => {
     }
     loadInventory();
 }
+
 
 //LOAD MAP
 const loadMap = (currentMap) => {
@@ -295,10 +345,12 @@ const loadMap = (currentMap) => {
 	}
 
 	// CLEAR PREVIOUS MAP 
-	CURRENT_STATE.currentMap = undefined;
+    CURRENT_STATE.currentMap = undefined;
+    divMapName.innerHTML = "",
 	menuPeople.innerHTML = "";
 	menuPoi.innerHTML = "";
-	menuPlacesToGo.innerHTML = "";
+    menuPlacesToGo.innerHTML = "";
+    divLeftText.innerHTML = "";
 
 	// LOAD
 	CURRENT_STATE.currentMap = currentMap;
@@ -349,6 +401,7 @@ const loadMap = (currentMap) => {
                 if(person.personTalkedTo < person.personTalk.length-1){person.personTalkedTo++}
             }, false);
         }
+
         if(person.hasOwnProperty("personRomance")){
             let currentButton = document.createElement("div");
             currentButton.classList += "clickable";
@@ -384,12 +437,16 @@ const loadMap = (currentMap) => {
         currentPTG.classList += "clickable";
         currentPTG.id = `ptg_${ptg}`;
         menuPlacesToGo.appendChild(currentPTG);
+
+        currentPTG.addEventListener("click", function(){
+            let mapToFind = (this.id.substring(4));
+            for(i = 0; i < maps.length; i++){
+                if (maps[i].mapName == mapToFind){
+                    loadMap(maps[i]);
+                }
+            }
+        }, false)
     }))
-
-    // ADD EVENT LISTENERS!
-
-    // places to go
-
 
     window.scrollTo(0, 0);
 }

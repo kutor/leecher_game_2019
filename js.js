@@ -18,9 +18,11 @@ const menuPlacesToGo = document.getElementById("menu_subdivs_placestogo");
 
 let saveGame;
 let autoSaveGame;
+let currentMusic;
+let musicPlaying = true;
 
 //MUSIC
-const musicDefault = new Audio("");
+const musicDefault = new Audio("./music/music_test.ogg");
 
 let characters = [
     {
@@ -76,7 +78,7 @@ let items = [
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
             console.log("used item01");
-            removefromInventory(items[0].itemName);
+            removeFromInventory(items[0].itemName);
         },
         itemUsed: 0
     },
@@ -89,7 +91,7 @@ let items = [
 let maps = [
     {
         mapName: "TEST MAP NAME",
-        mapMusic: null,
+        mapMusic: musicDefault,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
 			console.log(`arrived at ${this.mapName}`);
@@ -129,7 +131,7 @@ let maps = [
                 },
                 {
                     poiName: "Point Of Interest Number One",
-                    poiEvent: ["", "", function(){writeText("PoI text for stuff", "poi text title")}],
+                    poiEvent: ["1", "2", "3", function(){writeText("POIFUNC")}, "4"],
                     poiDone: 0
                 }
             ],
@@ -138,56 +140,7 @@ let maps = [
                 "PTG2"
             ]
         },
-    },
-
-    {
-        mapName: "PTG1",
-        mapMusic: null,
-        mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
-        mapArriveEvent: function(){
-			console.log(`arrived at ${this.mapName}`);
-		},
-        mapMenu: {
-            personsAtPlace: [
-                {
-                    personName: "PTG1 Person 1",
-                    personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
-                    personTalk: ["talk test 1", "talk test 2", function(){writeText("TALKFUNCTION!")}],
-                    personRomance: ["romance test 1", function(){writeText("ROMANCEFUNCTION!")}, "romance test 3 final"],
-                    personTalkedTo: 0,
-                    personRomanced: 0
-                },
-                {
-                    personName: "Person2",
-                    personDescription: "Person2 Desc.",
-                    personTalk: ["", ""],
-                    personRomance: ["", ""],
-                    personTalkedTo: 0,
-                    personRomanced: 0
-                },
-                {
-                    personName: "Person 3",
-                    personDescription: "Person2 Desc. Lorem ipsum dolor sit amet.",
-                    personTalk: ["talk test 1", "talk test 2", "talk test 3 final"],
-                    personRomance: ["romance test 1", "romance test 2"],
-                    personTalkedTo: 0,
-                    personRomanced: 0
-                },
-            ],
-            pointsOfInterest: [
-                {
-                    poiName: "Keresek",
-                    poiEvent: ["", function(){writeText("PoI text for stuff", "poi text title")}, ""],
-                    poiDone: 0
-                },
-
-            ],
-            placesToGo: [
-                "TEST MAP NAME",
-                "PTG2"
-            ]
-        },
-    },
+    }
 ];
 
 
@@ -398,7 +351,7 @@ const loadMap = (currentMap) => {
 
             currentButton.addEventListener("click", function(){
                 writeText(person.personTalk[person.personTalkedTo], `BESZÉLEK VELE: ${person.personName}`);
-                if(typeof(person.personTalk[person.personTalkedTo+1]) != "string"){
+                if(typeof(person.personTalk[person.personTalkedTo+1]) == "function"){
                     person.personTalk[person.personTalkedTo+1]();
                     person.personTalkedTo++;
                 }
@@ -415,7 +368,7 @@ const loadMap = (currentMap) => {
 
             currentButton.addEventListener("click", function(){
                 writeText(person.personRomance[person.personRomanced], `KIKEZDEK VELE: ${person.personName}`);
-                if(typeof(person.personRomance[person.personRomanced+1]) != "string"){
+                if(typeof(person.personRomance[person.personRomanced+1]) == "function"){
                     person.personRomance[person.personRomanced+1]();
                     person.personRomanced++;
                 }
@@ -434,7 +387,7 @@ const loadMap = (currentMap) => {
 
         currentPoi.addEventListener("click", function(){
             writeText(poi.poiEvent[poi.poiDone], poi.poiName);
-            if(typeof(poi.poiEvent[poi.poiDone+1]) != "string"){
+            if(typeof(poi.poiEvent[poi.poiDone+1]) == "function"){
                 poi.poiEvent[poi.poiDone+1]();
                 poi.poiDone++;
             }
@@ -460,6 +413,19 @@ const loadMap = (currentMap) => {
         }, false)
     }))
 
+
+    //PLAY MUSIC
+	if (currentMusic == CURRENT_STATE.currentMap.mapMusic) {
+	} else {
+		currentMusic.pause();
+		currentMusic = CURRENT_STATE.currentMap.mapMusic;
+		currentMusic.play();
+		currentMusic.loop = true;
+	}
+	if (musicPlaying == false) {
+		currentMusic.volume = 0;
+	}
+
     window.scrollTo(0, 0);
 }
 
@@ -473,7 +439,10 @@ var CURRENT_STATE = {
     inventory: [items[0], items[1]],
 }
 
+
+
 // INITIALIZE GAME
+currentMusic = musicDefault;
 loadParty();
 loadInventory();
 loadMap(maps[0]);

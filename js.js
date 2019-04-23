@@ -99,7 +99,7 @@ let maps = [
                 {
                     personName: "Person 1",
                     personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
-                    personTalk: ["talk test 1", "talk test 2", function(){writeText("TALKFUNCTION!")}],
+                    personTalk: ["talk test 1", function(){writeText("TALKFUNCTION!")}, "talk test 2"],
                     personRomance: ["romance test 1", function(){writeText("ROMANCEFUNCTION!")}, "romance test 3 final"],
                     personTalkedTo: 0,
                     personRomanced: 0
@@ -124,7 +124,7 @@ let maps = [
             pointsOfInterest: [
                 {
                     poiName: "Keresek",
-                    poiEvent: ["", function(){writeText("PoI text for stuff", "poi text title")}, ""],
+                    poiEvent: ["1", function(){writeText("PoI text for stuff", "poi text title")}, "3"],
                     poiDone: 0
                 },
                 {
@@ -334,7 +334,7 @@ var removeFromInventory = (name) => {
 }
 
 
-//LOAD MAP
+// LOAD MAP
 const loadMap = (currentMap) => {
     
     // SAVE CURRENT MAP STATE TO MAPS ARRAY BEFORE LOADING NEW ONE
@@ -397,7 +397,11 @@ const loadMap = (currentMap) => {
             personButtonArea.appendChild(currentButton);
 
             currentButton.addEventListener("click", function(){
-                typeof(person.personTalk[person.personTalkedTo]) == "string" ? writeText(person.personTalk[person.personTalkedTo], `BESZÉLEK VELE: ${person.personName}`) : person.personTalk[person.personTalkedTo]();
+                writeText(person.personTalk[person.personTalkedTo], `BESZÉLEK VELE: ${person.personName}`);
+                if(typeof(person.personTalk[person.personTalkedTo+1]) != "string"){
+                    person.personTalk[person.personTalkedTo+1]();
+                    person.personTalkedTo++;
+                }
                 if(person.personTalkedTo < person.personTalk.length-1){person.personTalkedTo++}
             }, false);
         }
@@ -410,7 +414,11 @@ const loadMap = (currentMap) => {
             personButtonArea.appendChild(currentButton);
 
             currentButton.addEventListener("click", function(){
-                typeof(person.personRomance[person.personRomanced]) == "string" ? writeText(person.personRomance[person.personRomanced], `KIKEZDEK VELE: ${person.personName}`) : person.personRomance[person.personRomanced]();
+                writeText(person.personRomance[person.personRomanced], `KIKEZDEK VELE: ${person.personName}`);
+                if(typeof(person.personRomance[person.personRomanced+1]) != "string"){
+                    person.personRomance[person.personRomanced+1]();
+                    person.personRomanced++;
+                }
                 if(person.personRomanced < person.personRomance.length-1){person.personRomanced++}
             }, false);
         }

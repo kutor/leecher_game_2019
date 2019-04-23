@@ -71,10 +71,21 @@ h4{
     margin-top:1%;
     background-color:#222;
 }
+.subdivs_flex{
+    display:flex;
+    flex-wrap:wrap;
+}
 .party_member{
     font-size:0.9em;
+    flex-basis:33%;
+    text-align:center;
 }
-.party_member:last-child, .person_at_place:last-child{
+
+.person_at_place{
+    flex-basis:50%;
+    text-align:center;
+}
+.party_member, .person_at_place{
     margin-bottom: 5px;
 }
 
@@ -85,10 +96,11 @@ h4{
 
 .party_member .details, .person_at_place .details{
     display:flex;
-    justify-content:flex-start;    
+    justify-content:flex-start;
+    flex-basis:33%; 
 }
 .party_member span, .person_at_place span{
-    width:20%;  
+    width:33%;  
 }
 .person_buttons{
     display:flex;
@@ -107,7 +119,7 @@ h4{
 .item{
     margin:0% 1% 1% 1%;
     text-align:center;
-    flex-basis:33%;
+    flex-basis:31%;
     font-size:0.9em;
 }
 
@@ -119,4 +131,5 @@ h4{
 .eventText{
     width:100%;
     background-color: #333;
+    margin:1% 0%;
 }

@@ -76,7 +76,9 @@ let items = [
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
             console.log("used item01");
-        }
+            removefromInventory(items[0].itemName);
+        },
+        itemUsed: 0
     },
     {
         itemName: "test item 2",
@@ -234,29 +236,35 @@ const removeFromParty = (name) => {
 const loadInventory = () => {
     menuInventory.innerHTML = "";
     CURRENT_STATE.inventory.map((item) => {
-    let currentItem = document.createElement("div");
-    currentItem.classList += "menu_subsubdivs item";
+        let currentItem = document.createElement("div");
+        currentItem.classList += "menu_subsubdivs item";
 
-    let currentSpan = document.createElement("span");
-    currentSpan.appendChild(document.createTextNode(item.itemName.toUpperCase()));
-    currentItem.appendChild(currentSpan);
-
-    currentItem.appendChild(document.createElement("br"));
-
-    currentSpan = document.createElement("em");
-    currentSpan.appendChild(document.createTextNode(item.itemDescription));
-    currentItem.appendChild(currentSpan);
-
-    currentItem.appendChild(document.createElement("br"));
-
-    if(item.hasOwnProperty("itemUseFunction")){
-        currentSpan = document.createElement("span");
-        currentSpan.classList += "button clickable";
-        currentSpan.appendChild(document.createTextNode("HASZNÁLAT"));
+        let currentSpan = document.createElement("span");
+        currentSpan.appendChild(document.createTextNode(item.itemName.toUpperCase()));
         currentItem.appendChild(currentSpan);
-    };
-    menuInventory.appendChild(currentItem);
-})}
+
+        currentItem.appendChild(document.createElement("br"));
+
+        currentSpan = document.createElement("em");
+        currentSpan.appendChild(document.createTextNode(item.itemDescription));
+        currentItem.appendChild(currentSpan);
+
+        currentItem.appendChild(document.createElement("br"));
+
+        if(item.hasOwnProperty("itemUseFunction")){
+            currentSpan = document.createElement("span");
+            currentSpan.classList += "button clickable";
+            currentSpan.id = `item_use_${item.itemName}`;
+            currentSpan.appendChild(document.createTextNode("HASZNÁLAT"));
+            currentItem.appendChild(currentSpan);
+
+            currentSpan.addEventListener("click", item.itemUseFunction, false)
+        };
+
+        menuInventory.appendChild(currentItem);
+    })
+}
+
 
 const addToInventory = (name) => {
     for(i = 0; i < items.length; i++){
@@ -335,6 +343,11 @@ const loadMap = (currentMap) => {
             currentButton.appendChild(document.createTextNode("BESZÉLEK VELE"));
             currentButton.id=`talk_${person.personName}`;
             personButtonArea.appendChild(currentButton);
+
+            currentButton.addEventListener("click", function(){
+                typeof(person.personTalk[person.personTalkedTo]) == "string" ? writeText(person.personTalk[person.personTalkedTo], `BESZÉLEK VELE: ${person.personName}`) : person.personTalk[person.personTalkedTo]();
+                if(person.personTalkedTo < person.personTalk.length-1){person.personTalkedTo++}
+            }, false);
         }
         if(person.hasOwnProperty("personRomance")){
             let currentButton = document.createElement("div");
@@ -342,6 +355,11 @@ const loadMap = (currentMap) => {
             currentButton.appendChild(document.createTextNode("KIKEZDEK VELE"))
             currentButton.id=`romance_${person.personName}`;
             personButtonArea.appendChild(currentButton);
+
+            currentButton.addEventListener("click", function(){
+                typeof(person.personRomance[person.personRomanced]) == "string" ? writeText(person.personRomance[person.personRomanced], `KIKEZDEK VELE: ${person.personName}`) : person.personRomance[person.personRomanced]();
+                if(person.personRomanced < person.personRomance.length-1){person.personRomanced++}
+            }, false);
         }
     }))
 
@@ -352,6 +370,11 @@ const loadMap = (currentMap) => {
         currentPoi.classList += "clickable";
         currentPoi.id = `poi_${poi.poiName}`;
         menuPoi.appendChild(currentPoi);
+
+        currentPoi.addEventListener("click", function(){
+            typeof(poi.poiEvent[poi.poiDone]) == "string" ? writeText(poi.poiEvent[poi.poiDone], poi.poiName) : poi.poiEvent[poi.poiDone]();
+            if(poi.poiDone < poi.poiEvent.length-1){poi.poiDone++}
+        }, false);
     }))
 
     //PLACES TO GO
@@ -365,35 +388,8 @@ const loadMap = (currentMap) => {
 
     // ADD EVENT LISTENERS!
 
-    // person talk
-    for(i = 0; i < CURRENT_STATE.currentMap.mapMenu.personsAtPlace.length; i++){
-        let person = CURRENT_STATE.currentMap.mapMenu.personsAtPlace[i];
-        document.getElementById(`talk_${person.personName}`).addEventListener("click", function(){
-            typeof(person.personTalk[person.personTalkedTo]) == "string" ? writeText(person.personTalk[person.personTalkedTo], `BESZÉLEK VELE: ${person.personName}`) : person.personTalk[person.personTalkedTo]();
-            if(person.personTalkedTo < person.personTalk.length-1){person.personTalkedTo++}
-        }, false);
-    }
-
-    // person romance
-    for(i = 0; i < CURRENT_STATE.currentMap.mapMenu.personsAtPlace.length; i++){
-        let person = CURRENT_STATE.currentMap.mapMenu.personsAtPlace[i];
-        document.getElementById(`romance_${person.personName}`).addEventListener("click", function(){
-            typeof(person.personRomance[person.personRomanced]) == "string" ? writeText(person.personRomance[person.personRomanced], `KIKEZDEK VELE: ${person.personName}`) : person.personRomance[person.personRomanced]();
-            if(person.personRomanced < person.personRomance.length-1){person.personRomanced++}
-        }, false);
-    }
-
-    // points of interest
-    for(i = 0; i < CURRENT_STATE.currentMap.mapMenu.pointsOfInterest.length; i++){
-        let poi = CURRENT_STATE.currentMap.mapMenu.pointsOfInterest[i];
-        document.getElementById(`poi_${poi.poiName}`).addEventListener("click", function(){
-            typeof(poi.poiEvent[poi.poiDone]) == "string" ? writeText(poi.poiEvent[poi.poiDone], poi.poiName) : poi.poiEvent[poi.poiDone]();
-            if(poi.poiDone < poi.poiEvent.length-1){poi.poiDone++}
-        }, false);
-    }
-
     // places to go
-    
+
 
     window.scrollTo(0, 0);
 }

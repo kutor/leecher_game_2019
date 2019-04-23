@@ -124,7 +124,7 @@ let maps = [
             pointsOfInterest: [
                 {
                     poiName: "Keresek",
-                    poiEvent: ["1", function(){writeText("PoI text for stuff", "poi text title")}, "3"],
+                    poiEvent: ["1", function(){writeText("thing")}, "3"],
                     poiDone: 0
                 },
                 {
@@ -433,7 +433,11 @@ const loadMap = (currentMap) => {
         menuPoi.appendChild(currentPoi);
 
         currentPoi.addEventListener("click", function(){
-            typeof(poi.poiEvent[poi.poiDone]) == "string" ? writeText(poi.poiEvent[poi.poiDone], poi.poiName) : poi.poiEvent[poi.poiDone]();
+            writeText(poi.poiEvent[poi.poiDone], poi.poiName);
+            if(typeof(poi.poiEvent[poi.poiDone+1]) != "string"){
+                poi.poiEvent[poi.poiDone+1]();
+                poi.poiDone++;
+            }
             if(poi.poiDone < poi.poiEvent.length-1){poi.poiDone++}
         }, false);
     }))

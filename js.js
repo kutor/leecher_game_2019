@@ -74,6 +74,7 @@ let enemies = [
 
 let items = [
     {
+        itemId: 0,
         itemName: "test item 1",
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
@@ -83,6 +84,7 @@ let items = [
         itemUsed: 0
     },
     {
+        itemId: 1,
         itemName: "test item 2",
         itemDescription: "test item 2 description blah",
     },
@@ -415,19 +417,29 @@ const loadMap = (currentMap) => {
 
 
     //PLAY MUSIC
-	if (currentMusic == CURRENT_STATE.currentMap.mapMusic) {
-	} else {
+	if (currentMusic != CURRENT_STATE.currentMap.mapMusic) {
 		currentMusic.pause();
 		currentMusic = CURRENT_STATE.currentMap.mapMusic;
-		currentMusic.play();
-		currentMusic.loop = true;
+        currentMusic.loop = true;
+        musicPlaying ? currentMusic.play() : currentMusic.pause();
 	}
-	if (musicPlaying == false) {
-		currentMusic.volume = 0;
-	}
+
 
     window.scrollTo(0, 0);
 }
+
+document.getElementById("menu_subdivs_sound").addEventListener("click", function(){
+
+    if(musicPlaying){
+        musicPlaying = false;
+        currentMusic.pause();
+        this.innerHTML = "ZENE BE";
+    }else{
+        musicPlaying = true;
+        currentMusic.play();
+        this.innerHTML = "ZENE KI";
+    }
+}, false);
 
 
 

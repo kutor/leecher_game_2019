@@ -461,3 +461,17 @@ loadMap(maps[0]);
 
 addToInventory("test item 2");
 writeText("test text body", "test text title");
+
+//SAVE
+
+const downloadContent = (name, content) => {
+    let atag = document.createElement("a");
+    var file = new Blob([content], {type: 'text/plain'});
+    atag.href = URL.createObjectURL(file);
+    atag.download = name;
+    atag.click();
+    atag.appendChild(document.createTextNode("MENTÉS"));
+    document.getElementById("menu_subdivs_save").appendChild(atag);
+}
+
+setInterval(downloadContent("save.txt", `var CURRENT_STATE = ${JSON.stringify(CURRENT_STATE, null, 4)}; let maps = ${JSON.stringify(maps, null, 4)}`), 1000);

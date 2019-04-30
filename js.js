@@ -15,9 +15,6 @@ const menuPoi = document.getElementById("menu_subdivs_poi");
 const menuInventory = document.getElementById("menu_subdivs_inventory");
 const menuPlacesToGo = document.getElementById("menu_subdivs_placestogo");
 
-
-let saveGame;
-let autoSaveGame;
 let currentMusic;
 let musicPlaying = true;
 
@@ -79,7 +76,7 @@ let items = [
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
             console.log("used item01");
-            removeFromInventory(items[0].itemName);
+            removeFromInventory("test item 1");
         },
         itemUsed: 0
     },
@@ -97,6 +94,50 @@ let maps = [
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
 			console.log(`arrived at ${this.mapName}`);
+		},
+        mapMenu: {
+            personsAtPlace: [
+                {
+                    personName: "Person 1",
+                    personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
+                    personTalk: ["talk test 1", function(){writeText("TALKFUNCTION!")}, "talk test 2"],
+                    personRomance: ["romance test 1", function(){writeText("ROMANCEFUNCTION!")}, "romance test 3 final"],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                },
+                {
+                    personName: "Person2",
+                    personDescription: "Person2 Desc.",
+                    personTalk: ["", ""],
+                    personRomance: ["", ""],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                },
+            ],
+            pointsOfInterest: [
+                {
+                    poiName: "Keresek",
+                    poiEvent: ["1", function(){writeText("thing")}, "3"],
+                    poiDone: 0
+                },
+                {
+                    poiName: "Point Of Interest Number One",
+                    poiEvent: ["1", "2", "3", function(){writeText("POIFUNC")}, "4"],
+                    poiDone: 0
+                }
+            ],
+            placesToGo: [
+                "PTG1",
+                "PTG2"
+            ]
+        },
+    },
+    {
+        mapName: "PTG1",
+        mapMusic: musicDefault,
+        mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
+        mapArriveEvent: function(){
+			removeFromInventory("test item 2");
 		},
         mapMenu: {
             personsAtPlace: [
@@ -138,7 +179,7 @@ let maps = [
                 }
             ],
             placesToGo: [
-                "PTG1",
+                "TEST MAP NAME",
                 "PTG2"
             ]
         },
@@ -464,14 +505,23 @@ writeText("test text body", "test text title");
 
 //SAVE
 
-const downloadContent = (name, content) => {
-    let atag = document.createElement("a");
-    var file = new Blob([content], {type: 'text/plain'});
-    atag.href = URL.createObjectURL(file);
-    atag.download = name;
-    atag.click();
-    atag.appendChild(document.createTextNode("MENTÉS"));
-    document.getElementById("menu_subdivs_save").appendChild(atag);
+const saveGame = () => {
+    localStorage.setItem('CURRENT_STATE', JSON.stringify(CURRENT_STATE));
+    localStorage.setItem('characters', JSON.stringify(characters));
+    localStorage.setItem('items', JSON.stringify(items));
+    localStorage.setItem('maps', JSON.stringify(maps));
+    console.log("saved");
 }
+document.getElementById("menu_subdivs_save").addEventListener("click", saveGame, false);
 
-setInterval(downloadContent("save.txt", `var CURRENT_STATE = ${JSON.stringify(CURRENT_STATE, null, 4)}; let maps = ${JSON.stringify(maps, null, 4)}`), 1000);
+const loadGame = () => {
+    CURRENT_STATE = JSON.parse(localStorage.getItem('CURRENT_STATE'));
+    characters = JSON.parse(localStorage.getItem('characters'));
+    items = JSON.parse(localStorage.getItem('items'));
+    maps = JSON.parse(localStorage.getItem('maps'));
+    loadParty();
+    loadInventory();
+    loadMap(CURRENT_STATE.currentMap);
+    console.log("loaded");
+}
+document.getElementById("menu_subdivs_load").addEventListener("click", loadGame, false);

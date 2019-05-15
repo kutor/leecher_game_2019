@@ -19,7 +19,7 @@ let currentMusic;
 let musicPlaying = true;
 
 //MUSIC
-const musicDefault = new Audio("./music/music_test.ogg");
+const musicDefault = new Audio("music/music_test.ogg");
 
 let characters = [
     {
@@ -28,37 +28,34 @@ let characters = [
         hp:[100,100],
         mana: [80, 80],
         fight: [10, 20],
-        abilities: null,
+        ability: {
+            abilityName: "ability1",
+            abilityFunction: function(){
+                console.log("used ability01");
+            }
+        },
     },
     {
         name: "test char 2",
         description: "description for character number one",
         hp:[100,100],
         fight: [10, 20],
-        abilities: null,
+        ability: null,
     },
     {
         name: "test char 3",
         description: "description for character number one",
         hp:[100,100],
-        abilities: null,
+        ability: null,
     },
     {
         name: "test char 4",
         description: "description for character number one",
         hp:[100,100],
-        abilities: null,
+        ability: null,
     },
 ];
 
-let abilities = [
-    {
-        abilityName: "ability1",
-        abilityFunction: function(){
-            console.log("used ability01");
-        }
-    },
-];
 
 let enemies = [
     {
@@ -135,7 +132,7 @@ let maps = [
     {
         mapName: "PTG1",
         mapMusic: musicDefault,
-        mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
+        mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function(){
 			removeFromInventory("test item 2");
 		},
@@ -240,19 +237,36 @@ const loadParty = () => {
     currentMember.appendChild(document.createElement("br"));
     currentSpan = document.createElement("span");
     currentSpan.appendChild(document.createTextNode(`HP: ${member.hp[0]}/${member.hp[1]}`));
+    currentSpan.id = `${member.name}_hp`;
     currentDetails.appendChild(currentSpan);
 
     if(member.hasOwnProperty("mana")){
         currentSpan = document.createElement("span");
         currentSpan.appendChild(document.createTextNode(`Mana: ${member.mana[0]}/${member.mana[1]}`));
+        currentSpan.id = `${member.name}_mana`;
         currentDetails.appendChild(currentSpan);
     }
 
     if(member.hasOwnProperty("fight")){
         currentSpan = document.createElement("span");
         currentSpan.appendChild(document.createTextNode(`Harc: ${member.fight[0]}-${member.fight[1]}`));
+        currentSpan.id = `${member.name}_fight`;
         currentDetails.appendChild(currentSpan);
     }
+    /*
+    if(member.ability){
+        currentDetails.appendChild(document.createElement("br"));
+        let currentButton = document.createElement("div");
+        currentButton.classList += "clickable";
+        currentButton.appendChild(document.createTextNode(member.ability.abilityName.toUpperCase()));
+        currentButton.id=`ability_${member.ability}`;
+        currentDetails.appendChild(currentButton);
+
+        currentButton.addEventListener("click", function(){
+            member.ability.abilityFunction()
+        }, false);
+    }
+    */
 
     currentMember.appendChild(currentDetails);
 
@@ -365,7 +379,7 @@ const loadMap = (currentMap) => {
         CURRENT_STATE.currentMap.mapArriveEvent();
     }
     
-    //PEOPLE AT MAP
+    // PEOPLE AT MAP
     CURRENT_STATE.currentMap.mapMenu.personsAtPlace.map((person => {
         let currentPerson = document.createElement("div");
         currentPerson.classList += "person_at_place";
@@ -420,7 +434,7 @@ const loadMap = (currentMap) => {
         }
     }))
 
-    //POINTS OF INTEREST
+    // POINTS OF INTEREST
     CURRENT_STATE.currentMap.mapMenu.pointsOfInterest.map((poi => {
         let currentPoi = document.createElement("div");
         currentPoi.appendChild(document.createTextNode(poi.poiName));
@@ -438,7 +452,7 @@ const loadMap = (currentMap) => {
         }, false);
     }))
 
-    //PLACES TO GO
+    // PLACES TO GO
     CURRENT_STATE.currentMap.mapMenu.placesToGo.map((ptg => {
         let currentPTG = document.createElement("div");
         currentPTG.appendChild(document.createTextNode(ptg.toString().toUpperCase()));
@@ -457,8 +471,8 @@ const loadMap = (currentMap) => {
     }))
 
 
-    //PLAY MUSIC
-	if (currentMusic != CURRENT_STATE.currentMap.mapMusic) {
+    // PLAY MUSIC
+	if (currentMusic && currentMusic != CURRENT_STATE.currentMap.mapMusic) {
 		currentMusic.pause();
 		currentMusic = CURRENT_STATE.currentMap.mapMusic;
         currentMusic.loop = true;
@@ -482,28 +496,8 @@ document.getElementById("menu_subdivs_sound").addEventListener("click", function
     }
 }, false);
 
-
-
-// CURRENT STATE OF CHARACTERS, MAPS AND STUFF
-
-var CURRENT_STATE = {
-    currentMap: maps[0],
-    party: [characters[0]],
-    inventory: [items[0], items[1]],
-}
-
-
-
-// INITIALIZE GAME
-currentMusic = musicDefault;
-loadParty();
-loadInventory();
-loadMap(maps[0]);
-
-addToInventory("test item 2");
-writeText("test text body", "test text title");
-
-//SAVE
+/*
+// SAVE & LOAD
 
 const saveGame = () => {
     localStorage.setItem('CURRENT_STATE', JSON.stringify(CURRENT_STATE));
@@ -522,6 +516,51 @@ const loadGame = () => {
     loadParty();
     loadInventory();
     loadMap(CURRENT_STATE.currentMap);
+    writeText("Játékállás betöltve!")
     console.log("loaded");
+    console.log(CURRENT_STATE);
 }
 document.getElementById("menu_subdivs_load").addEventListener("click", loadGame, false);
+*/
+
+// FIGHT SYSTEM
+
+const damageToCharacter = (char, damage) => {
+    for(i = 0; i < CURRENT_STATE.party.length; i++){
+        if (CURRENT_STATE.party[i].name == char){
+            CURRENT_STATE.party[i].hp[0] -= damage;
+            document.getElementById(`${CURRENT_STATE.party[i].name}_hp`).innerHTML = `HP: ${CURRENT_STATE.party[i].hp[0]}/${CURRENT_STATE.party[i].hp[1]}`;
+
+        }
+    }
+}
+
+const manaLoss = (char, damage) => {
+    for(i = 0; i < CURRENT_STATE.party.length; i++){
+        if (CURRENT_STATE.party[i].name == char){
+            CURRENT_STATE.party[i].mana[0] -= damage;
+            document.getElementById(`${CURRENT_STATE.party[i].name}_mana`).innerHTML = `Mana: ${CURRENT_STATE.party[i].mana[0]}/${CURRENT_STATE.party[i].mana[1]}`;
+
+        }
+    }
+}
+
+// CURRENT STATE OF CHARACTERS, MAPS AND STUFF
+
+var CURRENT_STATE = {
+    currentMap: maps[0],
+    party: [characters[0]],
+    inventory: [items[0], items[1]],
+    currentMusic: musicDefault
+}
+
+
+
+// INITIALIZE GAME
+
+
+loadParty();
+loadInventory();
+loadMap(maps[0]);
+
+writeText("test text body", "test text title");

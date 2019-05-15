@@ -210,6 +210,8 @@ const writeText = (text, title = "") => {
 
     currentText.appendChild(document.createTextNode(text));
     divLeftText.appendChild(currentText);
+
+    currentText.scrollIntoView();
 }
 
 

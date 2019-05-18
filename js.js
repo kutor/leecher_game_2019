@@ -88,6 +88,7 @@ let maps = [
     {
         mapName: "TEST MAP NAME",
         mapMusic: musicDefault,
+        visited:0,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
 			console.log(`arrived at ${this.mapName}`);
@@ -132,6 +133,7 @@ let maps = [
     {
         mapName: "PTG1",
         mapMusic: musicDefault,
+        visited:0,
         mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function(){
 			removeFromInventory("test item 2");
@@ -365,7 +367,8 @@ const loadMap = (currentMap) => {
     divLeftText.innerHTML = "";
 
 	// LOAD
-	CURRENT_STATE.currentMap = currentMap;
+    CURRENT_STATE.currentMap = currentMap;
+    currentMap.visited ++;
 
     // TITLE AND TEXT
     currentStuff = document.createElement("h1");
@@ -556,10 +559,9 @@ var CURRENT_STATE = {
     currentMusic: musicDefault
 }
 
-
+// -------------------------------------------------------------------------------------------------------
 
 // INITIALIZE GAME
-
 
 loadParty();
 loadInventory();

@@ -46,18 +46,22 @@ a{
 }
 
 #game_area{
-    display:flex;
-    justify-content: center;
     width:100%;
 }
 
 #left_text, #right_menu{
+    display:inline-block;
+    vertical-align: top;
     width:47.5%;
-    min-height:80%;
     background-color:#222;
     margin:1% 0.5%;
     padding:10px;
 }
+
+#right_menu{
+    position:fixed;
+}
+
 .menu_subdivs{
     background-color: #222;
 }

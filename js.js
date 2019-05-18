@@ -56,6 +56,13 @@ let characters = [
     },
 ];
 
+const partyLookup = (char) => {
+    for(i = 0; i < characters.length; i++){
+        if(characters[i].name == item){
+            return characters[i];
+        }
+    }
+}
 
 let enemies = [
     {
@@ -67,8 +74,38 @@ let enemies = [
 ];
 
 let items = [
+    /*
     {
         itemId: 0,
+        itemName: "",
+        itemDescription: "",
+        itemUseFunction: function(){
+            console.log("used item01");
+            removeFromInventory("");
+        },
+        itemUsed: 0
+    },
+    */
+    {
+        itemId: 0,
+        itemName: "Mobiltelefon",
+        itemDescription: "A telefonod.",
+        itemUseFunction: function(){
+            if(items[0].charge){
+                items[0].charge -=5;
+                writeText(items[0].phoneTexts[items[0].itemUsed], `TÁRGYHASZNÁLAT: TELEFON`);
+                items[0].itemUsed ++;
+                console.log(items[0].charge);
+            }else{
+                writeText("Lemerült a telefonod!", `TÁRGYHASZNÁLAT: TELEFON`);
+            }
+        },
+        itemUsed: 0,
+        charge:100,
+        phoneTexts: ["Origo.hu: Brutálisan legyilkolt kisgyerek agyvelejét kanalazta Párizs főterén a migráns", "444.hu: Újabb fokozatba kapcsolt az Orbán-diktatúra: szigorították a gyerekmolesztálás büntetését", ""],
+    },
+    {
+        itemId: 1,
         itemName: "test item 1",
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
@@ -78,11 +115,20 @@ let items = [
         itemUsed: 0
     },
     {
-        itemId: 1,
+        itemId: 2,
         itemName: "test item 2",
         itemDescription: "test item 2 description blah",
     },
 ];
+
+const itemLookup = (item) => {
+    for(i = 0; i < items.length; i++){
+        if(items[i].itemName == item){
+            return items[i];
+        }
+    }
+}
+
 
 let maps = [
     {
@@ -91,7 +137,7 @@ let maps = [
         visited:0,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
-			console.log(`arrived at ${this.mapName}`);
+			this.visited ? console.log(`arrived at ${this.mapName} multiple times`) : console.log(`arrived at ${this.mapName} first time`);
 		},
         mapMenu: {
             personsAtPlace: [
@@ -186,7 +232,7 @@ let maps = [
 ];
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
 
 // FUNCTIONS
 
@@ -368,7 +414,6 @@ const loadMap = (currentMap) => {
 
 	// LOAD
     CURRENT_STATE.currentMap = currentMap;
-    currentMap.visited ++;
 
     // TITLE AND TEXT
     currentStuff = document.createElement("h1");
@@ -475,15 +520,16 @@ const loadMap = (currentMap) => {
         }, false)
     }))
 
-
     // PLAY MUSIC
 	if (currentMusic && currentMusic != CURRENT_STATE.currentMap.mapMusic) {
 		currentMusic.pause();
 		currentMusic = CURRENT_STATE.currentMap.mapMusic;
         currentMusic.loop = true;
         musicPlaying ? currentMusic.play() : currentMusic.pause();
-	}
-
+    }
+    
+    // MARK MAP AS VISITED
+    currentMap.visited ++;
 
     window.scrollTo(0, 0);
 }
@@ -535,7 +581,7 @@ const damageToCharacter = (char, damage) => {
         if (CURRENT_STATE.party[i].name == char){
             CURRENT_STATE.party[i].hp[0] -= damage;
             document.getElementById(`${CURRENT_STATE.party[i].name}_hp`).innerHTML = `HP: ${CURRENT_STATE.party[i].hp[0]}/${CURRENT_STATE.party[i].hp[1]}`;
-
+            writeText(`${CURRENT_STATE.party[i].name} sebződött ${damage}HP-t!`);
         }
     }
 }
@@ -559,7 +605,7 @@ var CURRENT_STATE = {
     currentMusic: musicDefault
 }
 
-// -------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
 
 // INITIALIZE GAME
 

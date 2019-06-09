@@ -93,6 +93,7 @@ let items = [
 let maps = [
     {
         mapName: "TEST MAP NAME",
+        active: true,
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
@@ -137,6 +138,7 @@ let maps = [
     },
     {
         mapName: "PTG1",
+        active: false,
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function(){
@@ -293,8 +295,8 @@ const addToParty = (name) => {
 }
 
 const removeFromParty = (name) => {
-    for(i = 0; i < CURRENT_STATE.party.length; i++){
-        if(CURRENT_STATE.party[i].name == name){
+    for(i = 0; i < characters.length; i++){
+        if(characters[i].name == name){
             characters[i].inParty = false;
         }
     }
@@ -347,7 +349,7 @@ const addToInventory = (name) => {
 }
 
 var removeFromInventory = (name) => {
-    for(i = 0; i < CURRENT_STATE.inventory.length; i++){
+    for(i = 0; i < items.length; i++){
         items[i].inInventory = false;
     }
     loadInventory();
@@ -536,20 +538,20 @@ document.getElementById("menu_subdivs_load").addEventListener("click", loadGame,
 // FIGHT SYSTEM
 
 const damageToCharacter = (char, damage) => {
-    for(i = 0; i < CURRENT_STATE.party.length; i++){
-        if (CURRENT_STATE.party[i].name == char){
-            CURRENT_STATE.party[i].hp[0] -= damage;
-            document.getElementById(`${CURRENT_STATE.party[i].name}_hp`).innerHTML = `HP: ${CURRENT_STATE.party[i].hp[0]}/${CURRENT_STATE.party[i].hp[1]}`;
+    for(i = 0; i < characters.length; i++){
+        if (characters[i].name == char){
+            characters[i].hp[0] -= damage;
+            document.getElementById(`${characters[i].name}_hp`).innerHTML = `HP: ${characters[i].hp[0]}/${characters[i].hp[1]}`;
 
         }
     }
 }
 
 const manaLoss = (char, damage) => {
-    for(i = 0; i < CURRENT_STATE.party.length; i++){
-        if (CURRENT_STATE.party[i].name == char){
-            CURRENT_STATE.party[i].mana[0] -= damage;
-            document.getElementById(`${CURRENT_STATE.party[i].name}_mana`).innerHTML = `Mana: ${CURRENT_STATE.party[i].mana[0]}/${CURRENT_STATE.party[i].mana[1]}`;
+    for(i = 0; i < characters.length; i++){
+        if (characters[i].name == char){
+            characters[i].mana[0] -= damage;
+            document.getElementById(`${characters[i].name}_mana`).innerHTML = `Mana: ${characters[i].mana[0]}/${characters[i].mana[1]}`;
 
         }
     }
@@ -559,8 +561,6 @@ const manaLoss = (char, damage) => {
 
 var CURRENT_STATE = {
     currentMap: maps[0],
-    party: [characters[0]],
-    inventory: [items[0], items[1]],
     currentMusic: musicDefault
 }
 

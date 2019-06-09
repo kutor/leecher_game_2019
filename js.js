@@ -34,6 +34,7 @@ let characters = [
                 console.log("used ability01");
             }
         },
+        inParty: true,
     },
     {
         name: "test char 2",
@@ -41,28 +42,24 @@ let characters = [
         hp:[100,100],
         fight: [10, 20],
         ability: null,
+        inParty: false,
     },
     {
         name: "test char 3",
         description: "description for character number one",
         hp:[100,100],
         ability: null,
+        inParty: false,
     },
     {
         name: "test char 4",
         description: "description for character number one",
         hp:[100,100],
         ability: null,
+        inParty: false,
     },
 ];
 
-const partyLookup = (char) => {
-    for(i = 0; i < characters.length; i++){
-        if(characters[i].name == item){
-            return characters[i];
-        }
-    }
-}
 
 let enemies = [
     {
@@ -74,70 +71,32 @@ let enemies = [
 ];
 
 let items = [
-    /*
     {
         itemId: 0,
-        itemName: "",
-        itemDescription: "",
-        itemUseFunction: function(){
-            console.log("used item01");
-            removeFromInventory("");
-        },
-        itemUsed: 0
-    },
-    */
-    {
-        itemId: 0,
-        itemName: "Mobiltelefon",
-        itemDescription: "A telefonod.",
-        itemUseFunction: function(){
-            if(items[0].charge){
-                items[0].charge -=5;
-                writeText(items[0].phoneTexts[items[0].itemUsed], `TÁRGYHASZNÁLAT: TELEFON`);
-                items[0].itemUsed ++;
-                console.log(items[0].charge);
-            }else{
-                writeText("Lemerült a telefonod!", `TÁRGYHASZNÁLAT: TELEFON`);
-            }
-        },
-        itemUsed: 0,
-        charge:100,
-        phoneTexts: ["Origo.hu: Brutálisan legyilkolt kisgyerek agyvelejét kanalazta Párizs főterén a migráns", "444.hu: Újabb fokozatba kapcsolt az Orbán-diktatúra: szigorították a gyerekmolesztálás büntetését", ""],
-    },
-    {
-        itemId: 1,
         itemName: "test item 1",
         itemDescription: "test item 1 description blah",
         itemUseFunction: function(){
             console.log("used item01");
             removeFromInventory("test item 1");
         },
-        itemUsed: 0
+        itemUsed: 0,
+        inInventory: true,
     },
     {
-        itemId: 2,
+        itemId: 1,
         itemName: "test item 2",
         itemDescription: "test item 2 description blah",
+        inInventory: false,
     },
 ];
-
-const itemLookup = (item) => {
-    for(i = 0; i < items.length; i++){
-        if(items[i].itemName == item){
-            return items[i];
-        }
-    }
-}
-
 
 let maps = [
     {
         mapName: "TEST MAP NAME",
         mapMusic: musicDefault,
-        visited:0,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function(){
-			this.visited ? console.log(`arrived at ${this.mapName} multiple times`) : console.log(`arrived at ${this.mapName} first time`);
+			console.log(`arrived at ${this.mapName}`);
 		},
         mapMenu: {
             personsAtPlace: [
@@ -179,7 +138,6 @@ let maps = [
     {
         mapName: "PTG1",
         mapMusic: musicDefault,
-        visited:0,
         mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function(){
 			removeFromInventory("test item 2");
@@ -232,7 +190,7 @@ let maps = [
 ];
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 // FUNCTIONS
 
@@ -266,67 +224,69 @@ const writeText = (text, title = "") => {
 // LOAD PARTY
 const loadParty = () => {
     menuParty.innerHTML = "";
-    CURRENT_STATE.party.map((member) => {
+    characters.map((member) => {
     
-    let currentMember = document.createElement("div");
-    currentMember.classList += "party_member menu_subsubdivs";
+        if(member.inParty){
+            let currentMember = document.createElement("div");
+            currentMember.classList += "party_member menu_subsubdivs";
 
-    let currentSpan = document.createElement("span");
-    currentSpan.appendChild(document.createTextNode(member.name.toUpperCase()));
-    currentMember.appendChild(currentSpan);
+            let currentSpan = document.createElement("span");
+            currentSpan.appendChild(document.createTextNode(member.name.toUpperCase()));
+            currentMember.appendChild(currentSpan);
 
-    currentMember.appendChild(document.createElement("br"));
+            currentMember.appendChild(document.createElement("br"));
 
-    currentSpan = document.createElement("em");
-    currentSpan.appendChild(document.createTextNode(member.description));
-    currentMember.appendChild(currentSpan);
+            currentSpan = document.createElement("em");
+            currentSpan.appendChild(document.createTextNode(member.description));
+            currentMember.appendChild(currentSpan);
 
-    let currentDetails = document.createElement("div");
-    currentDetails.classList += "details";
+            let currentDetails = document.createElement("div");
+            currentDetails.classList += "details";
 
-    currentMember.appendChild(document.createElement("br"));
-    currentSpan = document.createElement("span");
-    currentSpan.appendChild(document.createTextNode(`HP: ${member.hp[0]}/${member.hp[1]}`));
-    currentSpan.id = `${member.name}_hp`;
-    currentDetails.appendChild(currentSpan);
+            currentMember.appendChild(document.createElement("br"));
+            currentSpan = document.createElement("span");
+            currentSpan.appendChild(document.createTextNode(`HP: ${member.hp[0]}/${member.hp[1]}`));
+            currentSpan.id = `${member.name}_hp`;
+            currentDetails.appendChild(currentSpan);
 
-    if(member.hasOwnProperty("mana")){
-        currentSpan = document.createElement("span");
-        currentSpan.appendChild(document.createTextNode(`Mana: ${member.mana[0]}/${member.mana[1]}`));
-        currentSpan.id = `${member.name}_mana`;
-        currentDetails.appendChild(currentSpan);
-    }
+            if(member.hasOwnProperty("mana")){
+                currentSpan = document.createElement("span");
+                currentSpan.appendChild(document.createTextNode(`Mana: ${member.mana[0]}/${member.mana[1]}`));
+                currentSpan.id = `${member.name}_mana`;
+                currentDetails.appendChild(currentSpan);
+            }
 
-    if(member.hasOwnProperty("fight")){
-        currentSpan = document.createElement("span");
-        currentSpan.appendChild(document.createTextNode(`Harc: ${member.fight[0]}-${member.fight[1]}`));
-        currentSpan.id = `${member.name}_fight`;
-        currentDetails.appendChild(currentSpan);
-    }
-    /*
-    if(member.ability){
-        currentDetails.appendChild(document.createElement("br"));
-        let currentButton = document.createElement("div");
-        currentButton.classList += "clickable";
-        currentButton.appendChild(document.createTextNode(member.ability.abilityName.toUpperCase()));
-        currentButton.id=`ability_${member.ability}`;
-        currentDetails.appendChild(currentButton);
+            if(member.hasOwnProperty("fight")){
+                currentSpan = document.createElement("span");
+                currentSpan.appendChild(document.createTextNode(`Harc: ${member.fight[0]}-${member.fight[1]}`));
+                currentSpan.id = `${member.name}_fight`;
+                currentDetails.appendChild(currentSpan);
+            }
+            /*
+            if(member.ability){
+                currentDetails.appendChild(document.createElement("br"));
+                let currentButton = document.createElement("div");
+                currentButton.classList += "clickable";
+                currentButton.appendChild(document.createTextNode(member.ability.abilityName.toUpperCase()));
+                currentButton.id=`ability_${member.ability}`;
+                currentDetails.appendChild(currentButton);
 
-        currentButton.addEventListener("click", function(){
-            member.ability.abilityFunction()
-        }, false);
-    }
-    */
+                currentButton.addEventListener("click", function(){
+                    member.ability.abilityFunction()
+                }, false);
+            }
+            */
 
-    currentMember.appendChild(currentDetails);
+            currentMember.appendChild(currentDetails);
 
-    menuParty.appendChild(currentMember);
-})}
+            menuParty.appendChild(currentMember);
+            }
+    })}
 
 const addToParty = (name) => {
     for(i = 0; i < characters.length; i++){
         if(characters[i].name == name){
-            CURRENT_STATE.party.push(characters[i]);
+            characters[i].inParty = true;
         }
     }
     loadParty();
@@ -335,7 +295,7 @@ const addToParty = (name) => {
 const removeFromParty = (name) => {
     for(i = 0; i < CURRENT_STATE.party.length; i++){
         if(CURRENT_STATE.party[i].name == name){
-            CURRENT_STATE.party.splice(i, 1);
+            characters[i].inParty = false;
         }
     }
     loadParty();
@@ -345,40 +305,42 @@ const removeFromParty = (name) => {
 // LOAD INVENTORY
 const loadInventory = () => {
     menuInventory.innerHTML = "";
-    CURRENT_STATE.inventory.map((item) => {
-        let currentItem = document.createElement("div");
-        currentItem.classList += "menu_subsubdivs item";
+    items.map((item) => {
+        if(item.inInventory){
+            let currentItem = document.createElement("div");
+            currentItem.classList += "menu_subsubdivs item";
 
-        let currentSpan = document.createElement("span");
-        currentSpan.appendChild(document.createTextNode(item.itemName.toUpperCase()));
-        currentItem.appendChild(currentSpan);
-
-        currentItem.appendChild(document.createElement("br"));
-
-        currentSpan = document.createElement("em");
-        currentSpan.appendChild(document.createTextNode(item.itemDescription));
-        currentItem.appendChild(currentSpan);
-
-        currentItem.appendChild(document.createElement("br"));
-
-        if(item.hasOwnProperty("itemUseFunction")){
-            currentSpan = document.createElement("span");
-            currentSpan.classList += "button clickable";
-            currentSpan.id = `item_use_${item.itemName}`;
-            currentSpan.appendChild(document.createTextNode("HASZNÁLAT"));
+            let currentSpan = document.createElement("span");
+            currentSpan.appendChild(document.createTextNode(item.itemName.toUpperCase()));
             currentItem.appendChild(currentSpan);
 
-            currentSpan.addEventListener("click", item.itemUseFunction, false)
-        };
+            currentItem.appendChild(document.createElement("br"));
 
-        menuInventory.appendChild(currentItem);
+            currentSpan = document.createElement("em");
+            currentSpan.appendChild(document.createTextNode(item.itemDescription));
+            currentItem.appendChild(currentSpan);
+
+            currentItem.appendChild(document.createElement("br"));
+
+            if(item.hasOwnProperty("itemUseFunction")){
+                currentSpan = document.createElement("span");
+                currentSpan.classList += "button clickable";
+                currentSpan.id = `item_use_${item.itemName}`;
+                currentSpan.appendChild(document.createTextNode("HASZNÁLAT"));
+                currentItem.appendChild(currentSpan);
+
+                currentSpan.addEventListener("click", item.itemUseFunction, false)
+            };
+
+            menuInventory.appendChild(currentItem);
+        }
     })
 }
 
 const addToInventory = (name) => {
     for(i = 0; i < items.length; i++){
         if(items[i].itemName == name){
-            CURRENT_STATE.inventory.push(items[i]);
+            items[i].inInventory = true;
         }
     }
     loadInventory();
@@ -386,9 +348,7 @@ const addToInventory = (name) => {
 
 var removeFromInventory = (name) => {
     for(i = 0; i < CURRENT_STATE.inventory.length; i++){
-        if(CURRENT_STATE.inventory[i].itemName == name){
-            CURRENT_STATE.inventory.splice(i, 1);
-        }
+        items[i].inInventory = false;
     }
     loadInventory();
 }
@@ -413,7 +373,7 @@ const loadMap = (currentMap) => {
     divLeftText.innerHTML = "";
 
 	// LOAD
-    CURRENT_STATE.currentMap = currentMap;
+	CURRENT_STATE.currentMap = currentMap;
 
     // TITLE AND TEXT
     currentStuff = document.createElement("h1");
@@ -520,16 +480,15 @@ const loadMap = (currentMap) => {
         }, false)
     }))
 
+
     // PLAY MUSIC
 	if (currentMusic && currentMusic != CURRENT_STATE.currentMap.mapMusic) {
 		currentMusic.pause();
 		currentMusic = CURRENT_STATE.currentMap.mapMusic;
         currentMusic.loop = true;
         musicPlaying ? currentMusic.play() : currentMusic.pause();
-    }
-    
-    // MARK MAP AS VISITED
-    currentMap.visited ++;
+	}
+
 
     window.scrollTo(0, 0);
 }
@@ -581,7 +540,7 @@ const damageToCharacter = (char, damage) => {
         if (CURRENT_STATE.party[i].name == char){
             CURRENT_STATE.party[i].hp[0] -= damage;
             document.getElementById(`${CURRENT_STATE.party[i].name}_hp`).innerHTML = `HP: ${CURRENT_STATE.party[i].hp[0]}/${CURRENT_STATE.party[i].hp[1]}`;
-            writeText(`${CURRENT_STATE.party[i].name} sebződött ${damage}HP-t!`);
+
         }
     }
 }
@@ -605,9 +564,10 @@ var CURRENT_STATE = {
     currentMusic: musicDefault
 }
 
-// ---------------------------------------------------------------------------------------------------------------------------------
+
 
 // INITIALIZE GAME
+
 
 loadParty();
 loadInventory();

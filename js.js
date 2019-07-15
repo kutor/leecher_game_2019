@@ -6,6 +6,7 @@ v1.0
 
 //CACHE DOM ELEMENTS
 
+const divInit = document.getElementById("init");
 const divMapName = document.getElementById("map_name");
 const divLeftText = document.getElementById("left_text");
 const divRightMenu = document.getElementById("right_menu");
@@ -23,7 +24,7 @@ const musicDefault = new Audio("music/music_test.ogg");
 
 let characters = [{
         name: "test char 1",
-        description: "description for character number one",
+        description: "A Leecher zenekar frissen érkezett szólistája.",
         hp: [100, 100],
         mana: [80, 80],
         fight: [10, 20],
@@ -98,12 +99,16 @@ let maps = [{
             personsAtPlace: [{
                     personName: "Person 1",
                     personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
-                    personTalk: ["talk test 1", function () {
-                        writeText("TALKFUNCTION!")
-                    }, "talk test 2"],
-                    personRomance: ["romance test 1", function () {
-                        writeText("ROMANCEFUNCTION!")
-                    }, "romance test 3 final"],
+                    personTalk: 
+                        ["talk test 1", function () {
+                            writeText("TALKFUNCTION!")
+                        }, 
+                        "talk test 2"],
+                    personRomance: 
+                        ["romance test 1", function () {
+                            writeText("ROMANCEFUNCTION!")
+                        }, 
+                        "romance test 3 final"],
                     personTalkedTo: 0,
                     personRomanced: 0
                 },
@@ -384,7 +389,7 @@ const loadMap = (currentMap) => {
 
 
             // TITLE AND TEXT
-            currentStuff = document.createElement("h1");
+            currentStuff = document.createElement("h2");
             currentStuff.appendChild(document.createTextNode(mapLoad.mapName));
             divMapName.appendChild(currentStuff);
 
@@ -518,7 +523,7 @@ document.getElementById("menu_subdivs_sound").addEventListener("click", function
     }
 }, false);
 
-/*
+
 // SAVE & LOAD
 
 const saveGame = () => {
@@ -530,19 +535,17 @@ const saveGame = () => {
 document.getElementById("menu_subdivs_save").addEventListener("click", saveGame, false);
 
 const loadGame = () => {
-    CURRENT_STATE = JSON.parse(localStorage.getItem('CURRENT_STATE'));
     characters = JSON.parse(localStorage.getItem('characters'));
     items = JSON.parse(localStorage.getItem('items'));
     maps = JSON.parse(localStorage.getItem('maps'));
     loadParty();
     loadInventory();
-    loadMap(mapLoad);
+    loadMap(maps.find(function(map){return map.active}).mapName);
     writeText("Játékállás betöltve!")
     console.log("loaded");
-    console.log(CURRENT_STATE);
 }
 document.getElementById("menu_subdivs_load").addEventListener("click", loadGame, false);
-*/
+
 
 // FIGHT SYSTEM
 
@@ -566,19 +569,49 @@ const manaLoss = (char, damage) => {
     }
 }
 
-// CURRENT STATE OF CHARACTERS, MAPS AND STUFF
-
-var CURRENT_STATE = {
-    currentMusic: musicDefault
-}
-
 
 
 // INITIALIZE GAME
 
+document.getElementById("game_area").style.display = "none";
+let initText = document.createElement("h1");
+initText.appendChild(document.createTextNode("LEECHER JÁTÉK 2019"));
+divInit.appendChild(initText);
 
-loadParty();
-loadInventory();
-loadMap("TEST MAP NAME");
+initText = document.createElement("p");
+initText.appendChild(document.createTextNode("2020-at írunk. A Leecher zenekar hosszú keresés után megtalálta szólócsellistáját: TÉGED!"));
+divInit.appendChild(initText);
 
-writeText("test text body", "test text title");
+initText = document.createElement("p");
+initText.appendChild(document.createTextNode("blablabla"));
+divInit.appendChild(initText);
+
+initText = document.createElement("p");
+initText.appendChild(document.createTextNode("Hogy hívnak?"));
+divInit.appendChild(initText);
+
+const playerNameInput = document.createElement("input");
+playerNameInput.style.width = "15%";
+divInit.appendChild(playerNameInput);
+
+divInit.innerHTML += `<div id="game_start_button" class="clickable">KEZDÉS</div>`;
+
+document.getElementById("game_start_button").addEventListener("click", function(){
+    if(playerNameInput.value){
+        divInit.style.display = "none";
+        characters[0].name = playerNameInput.value;
+        loadParty();
+        loadInventory();
+        loadMap("TEST MAP NAME");
+        currentMusic = musicDefault;
+
+        writeText("test text body", "test text title");
+        writeText("test text body");
+    }
+}, false)
+
+
+
+
+
+

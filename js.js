@@ -99,16 +99,16 @@ let maps = [{
             personsAtPlace: [{
                     personName: "Person 1",
                     personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
-                    personTalk: 
-                        ["talk test 1", function () {
+                    personTalk: ["talk test 1", function () {
                             writeText("TALKFUNCTION!")
-                        }, 
-                        "talk test 2"],
-                    personRomance: 
-                        ["romance test 1", function () {
+                        },
+                        "talk test 2"
+                    ],
+                    personRomance: ["romance test 1", function () {
                             writeText("ROMANCEFUNCTION!")
-                        }, 
-                        "romance test 3 final"],
+                        },
+                        "romance test 3 final"
+                    ],
                     personTalkedTo: 0,
                     personRomanced: 0
                 },
@@ -511,7 +511,6 @@ const loadMap = (currentMap) => {
 }
 
 document.getElementById("menu_subdivs_sound").addEventListener("click", function () {
-
     if (musicPlaying) {
         musicPlaying = false;
         currentMusic.pause();
@@ -540,7 +539,9 @@ const loadGame = () => {
     maps = JSON.parse(localStorage.getItem('maps'));
     loadParty();
     loadInventory();
-    loadMap(maps.find(function(map){return map.active}).mapName);
+    loadMap(maps.find(function (map) {
+        return map.active
+    }).mapName);
     writeText("Játékállás betöltve!")
     console.log("loaded");
 }
@@ -596,8 +597,8 @@ divInit.appendChild(playerNameInput);
 
 divInit.innerHTML += `<div id="game_start_button" class="clickable">KEZDÉS</div>`;
 
-document.getElementById("game_start_button").addEventListener("click", function(){
-    if(playerNameInput.value){
+document.getElementById("game_start_button").addEventListener("click", function () {
+    if (playerNameInput.value) {
         divInit.style.display = "none";
         characters[0].name = playerNameInput.value;
         loadParty();
@@ -609,9 +610,3 @@ document.getElementById("game_start_button").addEventListener("click", function(
         writeText("test text body");
     }
 }, false)
-
-
-
-
-
-

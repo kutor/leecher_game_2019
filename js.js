@@ -7,7 +7,7 @@ v1.0
 //CACHE DOM ELEMENTS
 
 const divInit = document.getElementById("init");
-const divMapName = document.getElementById("map_name");
+const divname = document.getElementById("map_name");
 const divLeftText = document.getElementById("left_text");
 const divRightMenu = document.getElementById("right_menu");
 const menuParty = document.getElementById("menu_subdivs_party");
@@ -62,38 +62,39 @@ let characters = [{
 
 
 let enemies = [{
-    enemyName: "enemy01",
-    enemyDescription: "desc for enemy01",
-    enemyHp: 10,
-    enemyAttack: [10, 20]
+    name: "enemy01",
+    description: "desc for enemy01",
+    hp: 10,
+    attack: [10, 20]
 }, ];
 
 let items = [{
         itemId: 0,
-        itemName: "test item 1",
-        itemDescription: "test item 1 description blah",
+        name: "test item 1",
+        description: "test item 1 description blah",
         itemUseFunction: function () {
             console.log("used item01");
             removeFromInventory("test item 1");
         },
-        itemUsed: 0,
+        used: 0,
         inInventory: true,
     },
     {
         itemId: 1,
-        itemName: "test item 2",
-        itemDescription: "test item 2 description blah",
+        name: "test item 2",
+        description: "test item 2 description blah",
         inInventory: false,
     },
 ];
 
 let maps = [{
-        mapName: "TEST MAP NAME",
+        name: "TEST MAP NAME",
         active: true,
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function () {
-            console.log(`arrived at ${this.mapName}`);
+            console.log(`arrived at ${this.name}`);
+            writeText("asd", "title")
         },
         mapMenu: {
             personsAtPlace: [{
@@ -143,7 +144,7 @@ let maps = [{
         },
     },
     {
-        mapName: "PTG1",
+        name: "PTG1",
         active: false,
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text2.",
@@ -208,7 +209,7 @@ let maps = [{
 
 // FUNCTIONS
 
-// MAKE ITEMS NOT CLICKABLE WHEN YOU HAVE TO MAKE A CHOICE
+// MAKE MENUS NOT CLICKABLE WHEN YOU HAVE TO MAKE A CHOICE
 const unclickable = () => {
     divRightMenu.style.pointerEvents = "none";
 }
@@ -232,6 +233,21 @@ const writeText = (text, title = "") => {
     divLeftText.appendChild(currentText);
 
     currentText.scrollIntoView();
+}
+
+const crElTxtAppend = (el, appendTo, tx ) => {
+    let elTemp = document.createElement(el);
+    elTemp.appendChild(document.createTextNode(tx));
+    document.getElementById(appendTo).appendChild(elTemp);
+}
+
+// GENERIC LOOKUP FUNCTION FOR ITEMS IN ARRAYS, BASED ON NAME PROPERTY
+const arrayLookup = (arrName, elName) => {
+    for(i = 0; i < arrName.length; i++){
+        if(arrName[i].name == elName){
+            return arrName[i];
+        }
+    }
 }
 
 
@@ -298,21 +314,8 @@ const loadParty = () => {
     })
 }
 
-const addToParty = (name) => {
-    for (i = 0; i < characters.length; i++) {
-        if (characters[i].name == name) {
-            characters[i].inParty = true;
-        }
-    }
-    loadParty();
-}
-
-const removeFromParty = (name) => {
-    for (i = 0; i < characters.length; i++) {
-        if (characters[i].name == name) {
-            characters[i].inParty = false;
-        }
-    }
+const modifyParty = (name, trueFalse) => {
+    arrayLookup(characters, name).inParty = trueFalse;
     loadParty();
 }
 
@@ -326,13 +329,13 @@ const loadInventory = () => {
             currentItem.classList += "menu_subsubdivs item";
 
             let currentSpan = document.createElement("span");
-            currentSpan.appendChild(document.createTextNode(item.itemName.toUpperCase()));
+            currentSpan.appendChild(document.createTextNode(item.name.toUpperCase()));
             currentItem.appendChild(currentSpan);
 
             currentItem.appendChild(document.createElement("br"));
 
             currentSpan = document.createElement("em");
-            currentSpan.appendChild(document.createTextNode(item.itemDescription));
+            currentSpan.appendChild(document.createTextNode(item.description));
             currentItem.appendChild(currentSpan);
 
             currentItem.appendChild(document.createElement("br"));
@@ -340,7 +343,7 @@ const loadInventory = () => {
             if (item.hasOwnProperty("itemUseFunction")) {
                 currentSpan = document.createElement("span");
                 currentSpan.classList += "button clickable";
-                currentSpan.id = `item_use_${item.itemName}`;
+                currentSpan.id = `item_use_${item.name}`;
                 currentSpan.appendChild(document.createTextNode("HASZNÁLAT"));
                 currentItem.appendChild(currentSpan);
 
@@ -352,19 +355,8 @@ const loadInventory = () => {
     })
 }
 
-const addToInventory = (name) => {
-    for (i = 0; i < items.length; i++) {
-        if (items[i].itemName == name) {
-            items[i].inInventory = true;
-        }
-    }
-    loadInventory();
-}
-
-var removeFromInventory = (name) => {
-    for (i = 0; i < items.length; i++) {
-        items[i].inInventory = false;
-    }
+const modifyInventory = (name, trueFalse) => {
+    arrayLookup(items, name).inInventory = trueFalse;
     loadInventory();
 }
 
@@ -373,29 +365,25 @@ var removeFromInventory = (name) => {
 const loadMap = (currentMap) => {
 
     for (i = 0; i < maps.length; i++) {
-        if (maps[i].mapName != currentMap) {
-
+        if (maps[i].name != currentMap) {
             maps[i].active = false;
+
         } else {
             maps[i].active = true;
             mapLoad = maps[i];
 
             // CLEAR PREVIOUS MAP 
-            divMapName.innerHTML = "";
+            divname.innerHTML = "";
             menuPeople.innerHTML = "";
             menuPoi.innerHTML = "";
             menuPlacesToGo.innerHTML = "";
             divLeftText.innerHTML = "";
 
+// crElTxtAppend = (el, appendTo, tx) 
 
             // TITLE AND TEXT
-            currentStuff = document.createElement("h2");
-            currentStuff.appendChild(document.createTextNode(mapLoad.mapName));
-            divMapName.appendChild(currentStuff);
-
-            currentStuff = document.createElement("p");
-            currentStuff.appendChild(document.createTextNode(mapLoad.mapArriveText));
-            divLeftText.appendChild(currentStuff);
+            crElTxtAppend("h2", "map_name", mapLoad.name);
+            crElTxtAppend("p", "left_text", mapLoad.mapArriveText);
 
             // ARRIVE EVENT
             if (mapLoad.hasOwnProperty("mapArriveEvent")) {
@@ -541,7 +529,7 @@ const loadGame = () => {
     loadInventory();
     loadMap(maps.find(function (map) {
         return map.active
-    }).mapName);
+    }).name);
     writeText("Játékállás betöltve!")
     console.log("loaded");
 }
@@ -550,63 +538,54 @@ document.getElementById("menu_subdivs_load").addEventListener("click", loadGame,
 
 // FIGHT SYSTEM
 
-const damageToCharacter = (char, damage) => {
-    for (i = 0; i < characters.length; i++) {
-        if (characters[i].name == char) {
-            characters[i].hp[0] -= damage;
-            document.getElementById(`${characters[i].name}_hp`).innerHTML = `HP: ${characters[i].hp[0]}/${characters[i].hp[1]}`;
-
-        }
-    }
+const modifyHp = (char, amount) => {
+    let charTemp = arrayLookup(characters, char);
+    charTemp.hp[0] -= amount;
+    document.getElementById(`${charTemp.name}_hp`).innerHTML = `HP: ${charTemp.hp[0]}/${charTemp.hp[1]}`;
 }
 
-const manaLoss = (char, damage) => {
-    for (i = 0; i < characters.length; i++) {
-        if (characters[i].name == char) {
-            characters[i].mana[0] -= damage;
-            document.getElementById(`${characters[i].name}_mana`).innerHTML = `Mana: ${characters[i].mana[0]}/${characters[i].mana[1]}`;
-
-        }
-    }
+const modifyMana = (char, amount) => {
+    let charTemp = arrayLookup(characters, char);
+    charTemp.mana[0] -= amount;
+    document.getElementById(`${charTemp.name}_mana`).innerHTML = `Mana: ${charTemp.mana[0]}/${charTemp.mana[1]}`;
 }
-
 
 
 // INITIALIZE GAME
 
-document.getElementById("game_area").style.display = "none";
-let initText = document.createElement("h1");
-initText.appendChild(document.createTextNode("LEECHER JÁTÉK 2019"));
-divInit.appendChild(initText);
+const initializeGame = () => {
 
-initText = document.createElement("p");
-initText.appendChild(document.createTextNode("2020-at írunk. A Leecher zenekar hosszú keresés után megtalálta szólócsellistáját: TÉGED!"));
-divInit.appendChild(initText);
+    document.getElementById("game_area").style.display = "none";
 
-initText = document.createElement("p");
-initText.appendChild(document.createTextNode("blablabla"));
-divInit.appendChild(initText);
+    crElTxtAppend("h1", "init", "LEECHER JÁTÉK 2019");
+    crElTxtAppend("p", "init", "2020-at írunk. A Leecher zenekar hosszú keresés után megtalálta szólócsellistáját: TÉGED!");
+    crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "Hogy hívnak?");
 
-initText = document.createElement("p");
-initText.appendChild(document.createTextNode("Hogy hívnak?"));
-divInit.appendChild(initText);
+    let playerNameInput = document.createElement("input");
+    playerNameInput.style.width = "25%";
+    divInit.appendChild(playerNameInput);
 
-const playerNameInput = document.createElement("input");
-playerNameInput.style.width = "15%";
-divInit.appendChild(playerNameInput);
+    let startButton = document.createElement("div");
+    startButton.id="game_start_button";
+    startButton.className = "clickable";
+    startButton.appendChild(document.createTextNode("KEZDÉS"));
+    divInit.appendChild(startButton);
 
-divInit.innerHTML += `<div id="game_start_button" class="clickable">KEZDÉS</div>`;
+    document.getElementById("game_start_button").addEventListener("click", function () {
+        if (playerNameInput.value && playerNameInput.value.length < 20) {
+            divInit.style.display = "none";
+            document.getElementById("game_area").style.display = "block";
+            characters[0].name = playerNameInput.value;
+            var playerName = characters[0].name;
+            loadParty();
+            loadInventory();
+            loadMap("TEST MAP NAME");
+            //currentMusic = musicDefault;
 
-document.getElementById("game_start_button").addEventListener("click", function () {
-    if (playerNameInput.value) {
-        divInit.style.display = "none";
-        characters[0].name = playerNameInput.value;
-        loadParty();
-        loadInventory();
-        loadMap("TEST MAP NAME");
-        currentMusic = musicDefault;
+        }
+    }, false)
 
-        writeText("test text body", "test text title");
-        writeText("test text body");
-    }
-}, false)
+}
+
+initializeGame();

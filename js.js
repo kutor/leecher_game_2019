@@ -94,7 +94,6 @@ let maps = [{
         mapArriveText: "Test map arrive text. Lets make this long to see how it behaves in a multi-line setting. Lorem ipsum dolor sit amet.",
         mapArriveEvent: function () {
             console.log(`arrived at ${this.name}`);
-            writeText("asd", "title")
         },
         mapMenu: {
             personsAtPlace: [{
@@ -149,7 +148,7 @@ let maps = [{
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function () {
-            
+            console.log(`arrived at ${this.name}`);
         },
         mapMenu: {
             personsAtPlace: [{
@@ -202,6 +201,51 @@ let maps = [{
             ]
         },
     }
+
+    /*
+    {
+        name: "name",
+        active: false,
+        mapMusic: musicDefault,
+        mapArriveText: "test map arrive text.",
+        mapArriveEvent: function () {
+            console.log(`arrived at ${this.name}`);
+        },
+        mapMenu: {
+            personsAtPlace: [{
+                    personName: "Person 1",
+                    personDescription: "Person1 Desc. Lorem ipsum dolor sit amet.",
+                    personTalk: ["talk test 1", function () {
+                        writeText("TALKFUNCTION!")
+                    }, "talk test 2"],
+                    personRomance: ["romance test 1", function () {
+                        writeText("ROMANCEFUNCTION!")
+                    }, "romance test 3 final"],
+                    personTalkedTo: 0,
+                    personRomanced: 0
+                }
+            ],
+            pointsOfInterest: [{
+                    poiName: "Keresek",
+                    poiEvent: ["1", function () {
+                        writeText("thing")
+                    }, "3"],
+                    poiDone: 0
+                },
+                {
+                    poiName: "Point Of Interest Number One",
+                    poiEvent: ["1", "2", "3", function () {
+                        writeText("POIFUNC")
+                    }, "4"],
+                    poiDone: 0
+                }
+            ],
+            placesToGo: [
+                "TEST MAP NAME",
+            ]
+        },
+    }
+    */
 ];
 
 
@@ -558,6 +602,11 @@ const initializeGame = () => {
     crElTxtAppend("h1", "init", "LEECHER JÁTÉK 2019");
     crElTxtAppend("p", "init", "2020-at írunk. A Leecher zenekar hosszú keresés után megtalálta szólócsellistáját: TÉGED!");
     crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "blablabla");
+    crElTxtAppend("p", "init", "blablabla");
     crElTxtAppend("p", "init", "Hogy hívnak?");
 
     let playerNameInput = document.createElement("input");
@@ -571,16 +620,21 @@ const initializeGame = () => {
     divInit.appendChild(startButton);
 
     document.getElementById("game_start_button").addEventListener("click", function () {
-        if (playerNameInput.value && playerNameInput.value.length < 20) {
-            divInit.style.display = "none";
-            document.getElementById("game_area").style.display = "block";
-            characters[0].name = playerNameInput.value;
-            var playerName = characters[0].name;
-            loadParty();
-            loadInventory();
-            loadMap("TEST MAP NAME");
-            //currentMusic = musicDefault;
-            
+        if (playerNameInput.value) {
+            if(playerNameInput.value.length > 20) {
+                alert("Ilyen hosszú név nincs is. Maradjunk húsz karakter alatt, oki?")
+            } else {
+                divInit.style.display = "none";
+                document.getElementById("game_area").style.display = "block";
+                characters[0].name = playerNameInput.value;
+                var playerName = characters[0].name;
+                loadParty();
+                loadInventory();
+                loadMap("TEST MAP NAME");
+                //currentMusic = musicDefault;
+            }
+        } else {
+            alert("Nem mondtad meg a neved!")
         }
     }, false)
 

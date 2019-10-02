@@ -539,15 +539,13 @@ document.getElementById("menu_subdivs_load").addEventListener("click", loadGame,
 // FIGHT SYSTEM
 
 const modifyHp = (char, amount) => {
-    let charTemp = arrayLookup(characters, char);
-    charTemp.hp[0] -= amount;
-    document.getElementById(`${charTemp.name}_hp`).innerHTML = `HP: ${charTemp.hp[0]}/${charTemp.hp[1]}`;
+    arrayLookup(characters, char).hp[0] += amount;
+    loadParty();
 }
 
 const modifyMana = (char, amount) => {
-    let charTemp = arrayLookup(characters, char);
-    charTemp.mana[0] -= amount;
-    document.getElementById(`${charTemp.name}_mana`).innerHTML = `Mana: ${charTemp.mana[0]}/${charTemp.mana[1]}`;
+    arrayLookup(characters, char).mana[0] += amount;
+    loadParty();
 }
 
 
@@ -582,7 +580,6 @@ const initializeGame = () => {
             loadInventory();
             loadMap("TEST MAP NAME");
             //currentMusic = musicDefault;
-
         }
     }, false)
 

@@ -74,7 +74,7 @@ let items = [{
         description: "test item 1 description blah",
         itemUseFunction: function () {
             console.log("used item01");
-            removeFromInventory("test item 1");
+            modifyInventory("test item 1", false);
         },
         used: 0,
         inInventory: true,
@@ -149,7 +149,7 @@ let maps = [{
         mapMusic: musicDefault,
         mapArriveText: "Test map arrive text2.",
         mapArriveEvent: function () {
-            removeFromInventory("test item 2");
+            
         },
         mapMenu: {
             personsAtPlace: [{
@@ -580,6 +580,7 @@ const initializeGame = () => {
             loadInventory();
             loadMap("TEST MAP NAME");
             //currentMusic = musicDefault;
+            
         }
     }, false)
 
